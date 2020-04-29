@@ -19,6 +19,15 @@ func main() {
 		slackWebhookURL = flag.String("webhook-url", "", "slack webhook url")
 		threshold       = flag.Duration("threshold", 7*24*time.Hour, "When to issue warnings. Accepts a time.Duration")
 	)
+    flag.Parse()
+
+    if len(strings.Split(*hosts, ",")) == 0 {
+        log.Fatal("no hosts specified")
+    }
+
+    if *slackWebhookURL == "" {
+        log.Fatal("webhook-url not specified")
+    }
 
 	var fields []*slack.Field
 
