@@ -2,15 +2,15 @@ package main
 
 import (
 	"crypto/tls"
+	"errors"
 	"flag"
+	"fmt"
 	"log"
 	"strings"
 	"time"
 
 	slack "github.com/ashwanthkumar/slack-go-webhook"
 	"github.com/dustin/go-humanize"
-	"github.com/hashicorp/go-multierror"
-	"github.com/pkg/errors"
 )
 
 func main() {
@@ -57,11 +57,7 @@ func main() {
 
 	// slack package returns a slice of errors. Convert into a multierror
 	if errs := slack.Send(*slackWebhookURL, "", payload); len(errs) > 0 {
-		var retErrs error
-		for _, v := range errs {
-			retErrs = multierror.Append(retErrs, v)
-		}
-		log.Fatal(errors.Wrap(retErrs, "sending slack notification"))
+		log.Fatal(fmt.Errorf("sending slack notification: %w", errors.Join(errs...)))
 	}
 }
 
@@ -81,7 +77,7 @@ func checkHost(host string, duration time.Duration) error {
 			checkedCerts[string(cert.Signature)] = struct{}{}
 
 			if time.Now().Add(duration).After(cert.NotAfter) {
-				return errors.Errorf("%s certificate expires in %s", cert.Subject.CommonName, humanize.Time(cert.NotAfter))
+				return fmt.Errorf("%s certificate expires in %s", cert.Subject.CommonName, humanize.Time(cert.NotAfter))
 			}
 		}
 	}
