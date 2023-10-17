@@ -2,15 +2,14 @@ package main
 
 import (
 	"crypto/tls"
-	"errors"
 	"flag"
 	"fmt"
 	"log"
 	"strings"
 	"time"
 
-	slack "github.com/ashwanthkumar/slack-go-webhook"
 	"github.com/dustin/go-humanize"
+	slack "github.com/jasonhancock/slack-go-webhook"
 )
 
 func main() {
@@ -56,8 +55,8 @@ func main() {
 	}
 
 	// slack package returns a slice of errors. Convert into a multierror
-	if errs := slack.Send(*slackWebhookURL, "", payload); len(errs) > 0 {
-		log.Fatal(fmt.Errorf("sending slack notification: %w", errors.Join(errs...)))
+	if err := slack.Send(*slackWebhookURL, "", payload); err != nil {
+		log.Fatal(fmt.Errorf("sending slack notification: %w", err))
 	}
 }
 
