@@ -67,14 +67,8 @@ func checkHost(host string, duration time.Duration) error {
 	}
 	defer conn.Close()
 
-	checkedCerts := make(map[string]struct{})
 	for _, chain := range conn.ConnectionState().VerifiedChains {
-		if len(chain) == 0 {
-			continue
-		}
 		for _, cert := range chain {
-			checkedCerts[string(cert.Signature)] = struct{}{}
-
 			if time.Now().Add(duration).After(cert.NotAfter) {
 				return fmt.Errorf("%s certificate expires in %s", cert.Subject.CommonName, humanize.Time(cert.NotAfter))
 			}
