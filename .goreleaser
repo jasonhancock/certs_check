@@ -1,0 +1,22 @@
+env:
+  - GO111MODULE=on
+builds:
+  - main: main.go
+    binary: certscheck
+    goos:
+      - linux
+    goarch:
+      - amd64
+archives:
+  - format: tar.gz
+nfpms:
+  - package_name: certs_check
+    vendor: Jason Hancock
+    homepage: https://github.com/jasonhancock/certs_check
+    maintainer: Jason Hancock <jason@jasonhancock.com>
+    description: An app for monitoring certificate expirations and sending slack notifications.
+    formats:
+      - deb
+    bindir: /usr/bin
+    epoch: 1
+    release: 1
